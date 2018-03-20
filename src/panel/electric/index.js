@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { View, Text, Button, Image, PixelRatio, Dimensions } from 'react-native';
+import { View, Text, Button, Image, PixelRatio, Dimensions, TouchableOpacity } from 'react-native';
 import Picker from 'react-native-picker';
 import TouchButton from '../../components/TouchButton';
 import Scroll from '../../components/poplayout';
 import _sdk from '../../sdk/sdk';
+// import Picker from 'react-native-picker';
 
 const styles = {
     container: {
@@ -36,7 +37,8 @@ class SocketPanel extends Component {
         switch: 0,
         delaySwitch: 0,
         orderSwitch: 0,
-        showModal: false
+        delayStatus: false,
+        delaySelected: []
     }
 
     componentDidMount () {
@@ -69,7 +71,7 @@ class SocketPanel extends Component {
                 // delaystate === 0
                 //     ? this.setState({ switch: 0, delaySwitch: 1, orderSwitch: 0 })
                 //     : this.setState({ switch: 0, delaySwitch: 0, orderSwitch: 0 });
-                this.setState({ showModal: !show });
+                this.scroll.showPicker();
                 break;
             case 2:
                 const orderstate = this.state.orderSwitch;
@@ -79,17 +81,27 @@ class SocketPanel extends Component {
                 break;
         }
     }
-    okfn = () => {
-        this.setState({
-            showModal: false
-        })
+    okfn = (data) => {
+        console.log(data);
+        if (data) {
+            this.setState({
+                delayStatus: true,
+                delaySelected: data
+            })
+        }
     }
 
-    cancelfn = () => {
-        this.setState({
-            showModal: false
-        })
+    cancelfn = (data) => {
+        console.log(data);
+        
     }
+
+    cancelDelay = () => {
+        this.setState({
+            delayStatus: false
+        });
+    }
+
     render () {
         const openImgUrl = this.state.switch === 0 
             ? require('../../assets/images/open.png') 
@@ -103,21 +115,13 @@ class SocketPanel extends Component {
         return (
             <View style={styles.container}>
                 <Scroll 
-                    show={this.state.showModal} 
-                    footer={true}
+                    ref={picker => this.scroll = picker}
+                    type={'Timer'}
+                    selectedValue={["00", "00"]}
                     okFn={this.okfn}
                     cancelFn={this.cancelfn}
-                >
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                    <Text>Hello World</Text>
-                </Scroll>
+                    title={'延迟关'}
+                />
                 <View>
                     <Image 
                         source={require('../../assets/images/socket.png')}
@@ -140,7 +144,21 @@ class SocketPanel extends Component {
                             height: Dimensions.get('window').height - 114
                         }}
                     />
-                    <Text>xxx后关机</Text>
+                    <Text style={{ textAlign: 'center', fontSize: 34, color: '#fff', lineHeight: 48 }}>
+                        {
+                            this.state.delayStatus
+                            ? `${this.state.delaySelected[0]}小时${this.state.delaySelected[1]}后关闭`
+                            : null
+                        }
+                    </Text>
+                    {
+                        this.state.delayStatus
+                        ?   <TouchableOpacity onPress={this.cancelDelay}>
+                                <Text style={{ textAlign: 'center', fontSize: 14 }}>取消延迟关闭</Text>
+                            </TouchableOpacity>
+                        :   null
+                    }
+                    
                 </View>
                 <View style={styles.bottomControl}>
                     <View style={styles.btnIcon}>
