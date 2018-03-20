@@ -116,7 +116,7 @@ class SocketPanel extends Component {
             <View style={styles.container}>
                 <Scroll 
                     ref={picker => this.scroll = picker}
-                    type={'Timer'}
+                    type={'Date'}
                     selectedValue={["00", "00"]}
                     okFn={this.okfn}
                     cancelFn={this.cancelfn}

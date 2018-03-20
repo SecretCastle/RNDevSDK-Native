@@ -1,3 +1,19 @@
+/**
+ * 判断是否是平闰年
+ * @param {*} year 
+ */
+function isLeapYear(year) {
+    let isLeapYear = false;
+    if (year % 4 === 0 && year % 100 !== 0) {
+        isLeapYear = true;
+    } else if (year % 100 === 0 && year % 400 === 0) {
+        isLeapYear = true;
+    } else if (year% 100 === 0 && year % 400 !== 0) {
+        isLeapYear = false;
+    }
+    return isLeapYear;
+}
+
 export function TimeCreator() {
     const hour = [];
     const minutes = [];
@@ -25,13 +41,35 @@ export function TimeCreator() {
 }
 
 export function DateCreator() {
-    const year = [];
-    const month = [];
-    const day = [];
-
-    return [
-        year,
-        month,
-        day
-    ]
+    const date = [];
+    for (let index = 1900; index < 2100; index++) {
+        const obj = {};
+        obj[index] = [];
+        for (let index_mon = 1; index_mon <= 12; index_mon++) {
+            const obj_mon = {};
+            obj_mon[index_mon] = [];
+            for (let index_day = 1; index_day <= 31; index_day++) {
+                if (isLeapYear(index)) {
+                    if (index_mon === 2) {
+                        if (index_day < 29) {
+                            obj_mon[index_mon].push(index_day);
+                        }
+                    } else {
+                        obj_mon[index_mon].push(index_day);
+                    }
+                } else {
+                    if (index_mon === 2) {
+                        if (index_day < 30) {
+                            obj_mon[index_mon].push(index_day);
+                        }
+                    } else {
+                        obj_mon[index_mon].push(index_day);
+                    }
+                }
+            }
+            obj[index].push(obj_mon);
+        }
+        date.push(obj);
+    }
+    return date;
 }

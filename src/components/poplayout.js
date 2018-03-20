@@ -8,20 +8,24 @@ import {
     Modal
 } from 'react-native';
 import Picker from 'react-native-picker';
-import { TimeCreator } from '../utils/tools';
+import { TimeCreator, DateCreator } from '../utils/tools';
 
 class Scroll extends Component {
+    constructor(props) {
+        super(props);
+        const { type } = props;
+    }
     componentDidMount () {
         const { type, okFn, cancelFn, currentTime, title } = this.props;
-        const data = this.createDataByType(type);
+        this.data = this.createDataByType(type);
         Picker.init({
-            pickerData: data.data,
+            pickerData: this.data.data,
             selectedValue: currentTime,
             pickerConfirmBtnText: '确定',
             pickerCancelBtnText: '取消',
             pickerConfirmBtnColor: [111, 203, 185, 1],
             pickerCancelBtnColor: [111, 203, 185, 1],
-            wheelFlex: [1,1,0],
+            wheelFlex: [1,1,1],
             pickerBg: [255, 255, 255, 1],
             pickerToolBarBg: [255, 255, 255, 1],
             pickerTextEllipsisLen: 10,
@@ -33,7 +37,7 @@ class Scroll extends Component {
                 cancelFn(data);
             },
             onPickerSelect: data => {
-                console.log(data);
+                console.log('select');
             }
         });
     }
@@ -45,7 +49,7 @@ class Scroll extends Component {
                 obj['data'] = TimeCreator();
                 break;
             case 'Date':
-
+                obj['data'] = DateCreator();
                 break;
             default:
                 break;
