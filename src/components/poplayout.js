@@ -17,9 +17,9 @@ class Scroll extends Component {
     }
     componentDidMount () {
         const { type, okFn, cancelFn, currentTime, title } = this.props;
-        this.data = this.createDataByType(type);
+        const data = this.createDataByType(type);
         Picker.init({
-            pickerData: this.data.data,
+            pickerData: data.data,
             selectedValue: currentTime,
             pickerConfirmBtnText: '确定',
             pickerCancelBtnText: '取消',
