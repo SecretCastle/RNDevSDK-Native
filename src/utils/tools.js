@@ -8,7 +8,7 @@ function isLeapYear(year) {
         isLeapYear = true;
     } else if (year % 100 === 0 && year % 400 === 0) {
         isLeapYear = true;
-    } else if (year% 100 === 0 && year % 400 !== 0) {
+    } else if (year % 100 === 0 && year % 400 !== 0) {
         isLeapYear = false;
     }
     return isLeapYear;
