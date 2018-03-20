@@ -106,7 +106,7 @@ class SocketPanel extends Component {
         const openImgUrl = this.state.switch === 0 
             ? require('../../assets/images/open.png') 
             : require('../../assets/images/openbright.png');
-        const delaySwitchImgUrl = this.state.delaySwitch === 0 
+        const delaySwitchImgUrl = !this.state.delayStatus
             ? require('../../assets/images/delayClose.png') 
             : require('../../assets/images/delayClosegray.png');
         const orderSwitchImgUrl = this.state.orderSwitch === 0
