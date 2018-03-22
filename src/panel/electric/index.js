@@ -29,8 +29,26 @@ const styles = {
         width: '30%',
         marginLeft: '1%',
         marginRight: '1%'
-    }
-}
+    },
+    navigationBar: {
+        container: {
+            position: 'absolute',
+            left: 0,
+            height: 68,
+            width: Dimensions.get('window').width,
+            backgroundColor: 'rgba(255,255,255,0.5)',
+            paddingTop: 20,
+            zIndex: 999,
+        },
+        backButton: {
+            padding: 12,
+            backgroundColor: 'rgba(255,255,255,0.5)',
+        },
+        backButtonTitle: {
+
+        },
+    },
+};
 
 class SocketPanel extends Component {
     state = {
@@ -102,6 +120,11 @@ class SocketPanel extends Component {
         });
     }
 
+    _pressBackButton = () => {
+        console.log('user press back button ' + new Date());
+        _sdk.DataBridge.back();
+    }
+
     render () {
         const openImgUrl = this.state.switch === 0 
             ? require('../../assets/images/open.png') 
@@ -112,6 +135,15 @@ class SocketPanel extends Component {
         const orderSwitchImgUrl = this.state.orderSwitch === 0
             ? require('../../assets/images/orderSwitch.png')
             : require('../../assets/images/orderSwitchbright.png');
+
+        const navigationBar = (
+            <View style={styles.navigationBar.container}>
+                <TouchableOpacity onPress={this._pressBackButton} style={styles.navigationBar.backButton}>
+                    <Text>Back</Text>
+                </TouchableOpacity>
+            </View>
+        );
+
         return (
             <View style={styles.container}>
                 <Scroll 
@@ -123,6 +155,7 @@ class SocketPanel extends Component {
                     title={'延迟关'}
                 />
                 <View>
+                    {navigationBar}
                     <Image 
                         source={require('../../assets/images/socket.png')}
                         style={{
