@@ -101,9 +101,12 @@ const Tools = {
 /**
  * SDK 遵循ali接口定义规范
  */
-export default SDK = {
-    Bridge: NativeModules.RNDataBridge,
-    BridgeEmitter: new NativeEventEmitter(this.Bridge),
+
+const bridge = NativeModules.RNDataBridge;
+const bridgeEmitter = new NativeEventEmitter(bridge);
+const SDK = {
+    Bridge: bridge,
+    BridgeEmitter: bridgeEmitter,
     DataBridge: {
         /**
          * 绑定数据接口
@@ -119,7 +122,7 @@ export default SDK = {
                     }
                 }
             } else if (PLATFORM === 'Native') {
-                this.BridgeEmitter.addListener('notification', (payload) => {
+                SDK.BridgeEmitter.addListener('notification', (payload) => {
                     if (payload.type === 'devicestatuts') {
                         callback(payload.data);
                     }
@@ -130,19 +133,28 @@ export default SDK = {
          * 下发数据接口
          * @param {*} data 
          */
-        setDeviceStatus(data) {
+        setDeviceStatus: (data) => {
             if (PLATFORM === 'localhost') {
                 if (data) {
                     const sendData = Tools.paramTransfor('send', data);
                     client.send(JSON.stringify(sendData));
                 }
             } else if (PLATFORM === 'Native') {
-                this.Bridge.send({
+                SDK.Bridge.send({
                     type: 'command',
                     data: data
                 });
             }
-        }
+        },
+        back: () => {
+            console.log('back!!!');
+            SDK.Bridge.send({
+                type: 'back',
+                data: {},
+            });
+        },
     }
-}
+};
+
+export default SDK;
 
