@@ -1,16 +1,16 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
 /**
- * 
- * PLATFORM 
- * 
+ *
+ * PLATFORM
+ *
  * localhost: 本地调试
  * Native: app调试
  */
-const PLATFORM = "Native"; // localhost | Native
+const PLATFORM = "localhost"; // localhost | Native
 
 
-const HOST = "192.168.2.139";
+const HOST = "192.168.19.118";
 const PORT = "9901";
 
 
@@ -34,32 +34,32 @@ const Tools = {
     paramTransfor(type, data) {
         /**
          * 下发数据格式转换函数
-         * 
+         *
          * 上报的结构
          * {
          *      "dp_key_array": ["WorkMode", "Power"],
          *      "dp_value": {
          *          "WorkMode": "1",
-         *          "Power": "1"   
+         *          "Power": "1"
          *      }
          * }
-         * 
+         *
          * 下发的结构
-         * 
+         *
          * {
          *      "WorkMode": "1",
          *      "Power": "1"
          * }
          */
-        
-         // 接收到的上报数据
+
+            // 接收到的上报数据
         const innerReceviedFactory = (data) => {
-            // 这里只接受dp_value
-            if (data.dp_value) {
-                return data.dp_value;
+                // 这里只接受dp_value
+                if (data.dp_value) {
+                    return data.dp_value;
+                }
+                return {};
             }
-            return {};
-        }
 
         // 下发的数据
         const innerSendFactory = (data) => {
@@ -72,11 +72,11 @@ const Tools = {
         }
 
         // 判断是上报还是下发
-        
+
         if (!type) {
             throw new Error('please select type');
         }
-        
+
         if (type === 'received') {
             return innerReceviedFactory(data);
         } else if (type === 'send') {
@@ -98,6 +98,20 @@ const Tools = {
     }
 }
 
+const helper = {
+    packageForData: (data) => {
+        const result = {
+            dp_key_array: [],
+            dp_value: {},
+        };
+        for (let key in data) {
+            result.dp_key_array.push(key);
+            result.dp_value[key] = data[key];
+        }
+        return result;
+    },
+};
+
 /**
  * SDK 遵循ali接口定义规范
  */
@@ -110,7 +124,7 @@ const SDK = {
     DataBridge: {
         /**
          * 绑定数据接口
-         * @param {*} callback 
+         * @param {*} callback
          */
         bindPushData(callback) {
             if (PLATFORM === 'localhost') {
@@ -131,18 +145,21 @@ const SDK = {
         },
         /**
          * 下发数据接口
-         * @param {*} data 
+         * @param {*} data
          */
         setDeviceStatus: (data) => {
+            console.log('PLATFORM', PLATFORM, data);
+            const targetData = helper.packageForData(data);
+            console.log('targetData', targetData);
+
             if (PLATFORM === 'localhost') {
                 if (data) {
-                    const sendData = Tools.paramTransfor('send', data);
-                    client.send(JSON.stringify(sendData));
+                    client.send(JSON.stringify(targetData));
                 }
             } else if (PLATFORM === 'Native') {
                 SDK.Bridge.send({
                     type: 'command',
-                    data: data
+                    data: targetData
                 });
             }
         },
@@ -153,8 +170,20 @@ const SDK = {
                 data: {},
             });
         },
-    }
+        loadPage: (pageName) => {
+            console.log('@SDK call loadPage function');
+            SDK.Bridge.send({
+                type: 'loadPage',
+                data: {
+                    name: pageName,
+                },
+            });
+        },
+    },
+    page: {
+        deviceDetail: 'deviceDetail',
+        timing: 'timing',
+    },
 };
 
 export default SDK;
-
